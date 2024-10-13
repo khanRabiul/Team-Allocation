@@ -89,43 +89,85 @@ const Employees = () => {
       teamName: "TeamD",
     },
   ]);
+
+  const [selectedTeam, setSelectedTeam] = useState("TeamB");
+
+  // Function to handle team selection change
+  const handleSelectedTeam = (event) => {
+    setSelectedTeam(event.target.value);
+  };
+
+  // Function to handle employee card click and toggle team assignment
+  const handleEmployeeCardClick = (event) => {
+    const employeeId = parseInt(event.currentTarget.id);
+
+    const transformedEmployees = employees.map((employee) =>
+      employee.id === employeeId
+        ? employee.teamName === selectedTeam
+          ? { ...employee, teamName: "" } // Remove from team
+          : { ...employee, teamName: selectedTeam } // Assign to selected team
+        : employee
+    );
+
+    setEmployees(transformedEmployees);
+  };
+
   return (
     <main>
-      <div className="container mx-auto grid grid-cols-4 gap-6">
-        {employees.map((employee) => (
-          <div key={employee.id} className="shadow-md rounded-md ">
-           <div>
-              <img src={employee.gender === "male" ?  male : female}
-            className="w-full" />
-           </div>
+      <div className="container mx-auto ">
+        {/* Dropdown for selecting teams */}
+        <div className="mb-8">
+          <select
+            value={selectedTeam}
+            onChange={handleSelectedTeam}
+            className="border-2 border-pink-600 rounded-md p-2 w-1/2"
+          >
+            <option value="TeamA">TeamA</option>
+            <option value="TeamB">TeamB</option>
+            <option value="TeamC">TeamC</option>
+            <option value="TeamD">TeamD</option>
+          </select>
+        </div>
 
+        {/* Employee cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {employees.map((employee) => (
+            <div
+              id={employee.id} // Set the employee id to the div
+              onClick={handleEmployeeCardClick}
+              key={employee.id}
+              className={`shadow-md rounded-md hover:shadow-lg ${
+                employee.teamName === selectedTeam
+                  ? "border-2 rounded border-gray-400"
+                  : ""
+              }`}
+            >
+              {/* Display employee image */}
+              <div>
+                <img
+                  src={employee.gender === "male" ? male : female}
+                  className="w-full"
+                  alt={employee.fullName}
+                />
+              </div>
 
-           {/* or  */}
-            {/* <div>
-              {employee.gender === "male" ? (
-                <img src={male} 
-                className="w-full"/>
-              ) : (
-                <img src={female} 
-                className="w-full"/>
-              )}
-            </div> */}
-
-            
-            <div className="p-2">
-              <h5 className="text-xl">
-                <strong className="mr-2">Full Name:</strong>
-                {employee.fullName}
-              </h5>
-              <p className="text-xl">
-                <strong className="mr-2"> Dessignation:</strong>
-                {employee.designation}
-              </p>
+              {/* Display employee details */}
+              <div className="p-2">
+                <h5 className="text-xl">
+                  <strong className="mr-2">Full Name:</strong>
+                  {employee.fullName}
+                </h5>
+                <p className="text-xl">
+                  <strong className="mr-2">Designation:</strong>
+                  {employee.designation}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </main>
   );
 };
+
 export default Employees;
